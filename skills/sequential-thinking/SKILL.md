@@ -1,230 +1,130 @@
 ---
 name: sequential-thinking
-description: Local CLI tool for systematic step-by-step reasoning with revision tracking and branching capabilities. Ideal for multi-stage analysis, design planning, problem decomposition, or tasks with initially unclear scope. Works offline without external dependencies.
-license: MIT
+description: Dynamic problem-solving through structured sequential thoughts. Use when breaking down complex problems, planning multi-step solutions, analyzing ambiguous requirements, debugging intricate issues, exploring design alternatives, or tackling problems where the full scope is unclear. Enables thought revision, branching, and iterative refinement.
 ---
 
-# Sequential Thinking CLI
+# Sequential Thinking
 
-Local implementation of structured problem-solving through iterative reasoning with revision and branching capabilities. **No MCP server required** - completely self-contained. **Now implemented in Python** for better ecosystem alignment and accessibility.
+## Overview
 
-## Core Capabilities
-
-- **Iterative reasoning**: Break complex problems into sequential thought steps
-- **Dynamic scope**: Adjust total thought count as understanding evolves
-- **Revision tracking**: Reconsider and modify previous conclusions
-- **Branch exploration**: Explore alternative reasoning paths from any point
-- **Stateless sessions**: Fresh reasoning sessions each time (MCP pattern)
-- **Context window safe**: No accumulation across sessions prevents context overflow
-- **Offline operation**: Works without internet connectivity
-- **Local processing**: Fast execution with no external dependencies
+This skill provides structured sequential thinking for complex problem-solving through a dynamic, reflective thought process. Each thought can build on, question, or revise previous insights as understanding deepens.
 
 ## When to Use
 
-Use the Sequential Thinking CLI when:
-- Problem requires multiple interconnected reasoning steps
-- Initial scope or approach is uncertain
-- Need to filter through complexity to find core issues
-- May need to backtrack or revise earlier conclusions
-- Want to explore alternative solution paths
-- Prefer clean, stateless reasoning sessions (starts fresh each time)
+- Breaking down complex problems into manageable steps
+- Planning and design with room for revision
+- Analysis that might need course correction
+- Problems where full scope is unclear initially
+- Multi-step solutions requiring maintained context
+- Filtering irrelevant information from complex scenarios
+- Debugging intricate issues requiring systematic exploration
 
-**Don't use for**: Simple queries, direct facts, or single-step tasks.
+## Script Location
 
-## Quick Start
+The script is located at: `~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts`
 
-### ⚠️ **IMPORTANT: Always Use Absolute Paths**
+Use `$SKILL_DIR` or the full path when invoking from any directory.
 
-**CRITICAL - Always Use Absolute Paths:**
-- ✅ **CORRECT**: `python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking interactive` - Works from any directory
-- ❌ **WRONG**: `python3 scripts_python/sequential-thinking interactive` - Only works when in the scripts directory
-- ❌ **WRONG**: `cd scripts_python && python3 sequential-thinking interactive` - Each bash command runs in separate shell
+## Core Workflow
 
-**ALWAYS use absolute path**: `python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking <command>`
+### 1. Initialize Thinking
 
-### Interactive Mode (Recommended)
+Start a thinking sequence by estimating total thoughts needed:
 
 ```bash
-# Start interactive reasoning session
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking interactive
+bun ~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts sequentialthinking \
+  --thought "Initial analysis of the problem..." \
+  --thought-number 1 \
+  --total-thoughts 5 \
+  --next-thought-needed true
 ```
 
-This provides a guided experience with:
-- Step-by-step thought input
-- Real-time analysis and feedback
-- Automatic session saving
-- Progress tracking
+### 2. Continue Sequence
 
-### API Mode (Drop-in MCP Replacement)
+Build on previous thoughts, adjusting estimates as needed:
 
 ```bash
-# Use as API (compatible with original MCP tool)
-echo '{"thought":"Need to analyze the problem","thoughtNumber":1,"totalThoughts":5,"nextThoughtNeeded":true}' | python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking api
+bun ~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts sequentialthinking \
+  --thought "Building on insight from step 1..." \
+  --thought-number 2 \
+  --total-thoughts 5 \
+  --next-thought-needed true
 ```
 
-### Test the Implementation
+### 3. Revise Previous Thinking
+
+When reconsidering earlier conclusions:
 
 ```bash
-# Run built-in tests
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking test
+bun ~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts sequentialthinking \
+  --thought "Reconsidering step 2, I realize..." \
+  --thought-number 4 \
+  --total-thoughts 6 \
+  --is-revision true \
+  --revises-thought 2 \
+  --next-thought-needed true
 ```
 
-## MCP-Style Session Management
+### 4. Branch Exploration
 
-### Stateless Sessions (Recommended)
+Explore alternative approaches:
 
 ```bash
-# Start fresh reasoning session (always starts from thought #1)
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/cli.py "How to optimize database queries?"
-
-# Add thoughts to current session
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/cli.py --thought "Need to analyze query patterns" --estimate 5
-
-# Show session summary
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/cli.py --summary
-
-# Export current session as markdown
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/cli.py --export markdown --output reasoning.md
+bun ~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts sequentialthinking \
+  --thought "Alternative approach from step 3..." \
+  --thought-number 5 \
+  --total-thoughts 7 \
+  --branch-from-thought 3 \
+  --branch-id "alternative-approach" \
+  --next-thought-needed true
 ```
 
-### Session Features
+### 5. Complete Thinking
 
-- **Stateless by design**: Each session starts fresh with thought #1
-- **Context window safe**: No accumulation across different reasoning sessions
-- **In-memory processing**: Fast execution without disk I/O
-- **Session isolation**: Each reasoning topic is completely independent
-- **Export capability**: Save current session results if needed
-
-## API Parameters
-
-### Required Parameters
-
-- `thought` (string): Current reasoning step
-- `nextThoughtNeeded` (boolean): Whether more reasoning is needed
-- `thoughtNumber` (integer): Current step number (starts at 1)
-- `totalThoughts` (integer): Estimated total steps needed
-
-### Optional Parameters
-
-- `isRevision` (boolean): Indicates this revises previous thinking
-- `revisesThought` (integer): Which thought number is being reconsidered
-- `branchFromThought` (integer): Thought number to branch from
-- `branchId` (string): Identifier for this reasoning branch
-
-## Response Format
-
-The API provides a minimal response format optimized for token efficiency:
-
-```json
-{
-  "thought": "Need to analyze database performance",
-  "thoughtNumber": 1,
-  "totalThoughts": 5,
-  "nextThoughtNeeded": true
-}
-```
-
-## Workflow Examples
-
-### Basic Problem Solving
+Conclude when solution is verified:
 
 ```bash
-# Start interactive session
-python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking interactive
-
-# Follow prompts:
-# Topic: "How to improve application performance"
-# Thought 1: "Need to identify performance bottlenecks first"
-# Thought 2: "Let me analyze database query patterns"
-# Thought 3: "Found N+1 query problem in user data fetching"
-# Thought 4: "Solution involves implementing query optimization"
-# Thought 5: "Will add proper database indexes and optimize joins"
+bun ~/.config/opencode/skills/sequential-thinking/scripts/sequential-thinking.ts sequentialthinking \
+  --thought "Final verified conclusion..." \
+  --thought-number 6 \
+  --total-thoughts 6 \
+  --next-thought-needed false
 ```
 
-### Revision Workflow
+## Key Features
 
-```bash
-# API mode with revision
-echo '{
-  "thought": "After deeper analysis, the issue is actually in memory allocation, not database queries",
-  "thoughtNumber": 4,
-  "totalThoughts": 6,
-  "isRevision": true,
-  "revisesThought": 3,
-  "nextThoughtNeeded": true
-}' | python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking api
-```
+- **Adjustable estimates**: Modify `totalThoughts` up/down as understanding evolves
+- **Thought revision**: Mark thoughts as revisions with `--is-revision` and `--revises-thought`
+- **Branching**: Explore alternatives with `--branch-from-thought` and `--branch-id`
+- **Non-linear thinking**: Branch or backtrack as needed
+- **Hypothesis verification**: Generate and verify solution hypotheses iteratively
 
-### Branching Workflow
+## Parameters Reference
 
-```bash
-# Create branch for alternative approach
-echo '{
-  "thought": "Let me explore a completely different architecture using microservices",
-  "thoughtNumber": 4,
-  "totalThoughts": 7,
-  "branchFromThought": 2,
-  "branchId": "microservices-alternative",
-  "nextThoughtNeeded": true
-}' | python3 /home/hazeruno/.config/opencode/skills/sequential-thinking/scripts_python/sequential-thinking api
-```
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `--thought` | Yes | Current thinking step content |
+| `--thought-number` | Yes | Current position in sequence (1-based) |
+| `--total-thoughts` | Yes | Estimated total thoughts (adjustable) |
+| `--next-thought-needed` | Yes | `true` to continue, `false` to conclude |
+| `--is-revision` | No | `true` if revising previous thinking |
+| `--revises-thought` | No | Which thought number being revised |
+| `--branch-from-thought` | No | Branching point thought number |
+| `--branch-id` | No | Identifier for the branch |
+| `--needs-more-thoughts` | No | Signal more thoughts needed |
 
-## MCP Pattern Benefits
+## Output Formats
 
-**Why Stateless Sessions?**
-
-1. **Context Window Protection**: No risk of context accumulation across sessions
-2. **Clean Reasoning**: Each topic gets a fresh mental slate
-3. **Fast Performance**: No disk I/O or session loading overhead
-4. **True to MCP Design**: Follows the original MCP sequential thinking pattern
-5. **Simplicity**: No session management complexity required
-
-**Session Lifecycle**
-```
-Start Session → Add Thoughts → Revising/Branching → Export Results → Session Ends
-   ↑                                                           ↓
-   ←────────────── Fresh Session Starts Here (Thought #1) ──────
-```
+Control output with `--output` flag:
+- `text` (default): Human-readable text
+- `json`: Structured JSON
+- `markdown`: Markdown formatted
+- `raw`: Raw response data
 
 ## Resources
 
-### scripts_python/
-Python modules that provide the CLI functionality with zero external dependencies.
+### scripts/
+- `sequential-thinking.ts` - MCP server wrapper for sequential thinking (requires Bun runtime)
 
-**Key Scripts:**
-- `sequential-thinking` - Main CLI interface with interactive, API, and test modes
-- `cli.py` - Full-featured CLI with session management and export capabilities
-- `api.py` - Core reasoning engine and API implementation
-
-**Usage:** Execute using absolute paths as shown in the Quick Start section.
-
-### scripts/ (Archived)
-Original Node.js modules retained for reference during migration.
-
-**Archived Scripts:**
-- `sequential-thinking` - Original JavaScript CLI interface
-- `cli.js` - Original JavaScript CLI with session management
-- `api.js` - Original JavaScript core reasoning engine
-- `session-manager.js` - Original JavaScript session persistence utilities
-
-### Benefits of MCP Pattern
-
-1. **Offline Capability**: Works without internet connectivity
-2. **Faster Execution**: No network latency or MCP server overhead
-3. **Context Window Safe**: Stateless sessions prevent context overflow
-4. **Clean Reasoning**: Fresh start for each topic with thought #1
-5. **Export Capabilities**: Save current session results when needed
-6. **No Session Management**: No complex persistence or cleanup required
-7. **True to Original**: Follows MCP sequential thinking design principles
-
-
-## Tips
-
-- Start with rough estimate for `totalThoughts`, refine as you progress
-- Use revision when assumptions prove incorrect
-- Branch when multiple approaches seem viable
-- Express uncertainty explicitly in thoughts
-- Adjust scope freely - accuracy matters less than progress visibility
-- Use interactive mode for new or complex problems
-- Export sessions as Markdown for documentation and sharing
-- Each session starts fresh - perfect for exploring new topics without baggage
+### references/
+- `thinking-patterns.md` - Common thinking patterns and examples for various problem types
