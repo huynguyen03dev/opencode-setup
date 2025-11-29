@@ -1,0 +1,12 @@
+Generate a concise, step-by-step implementation plan for the task(s) above.
+
+Requirements:
+- Follow the existing coding style and conventions used in this codebase.
+- Prioritize readability, testability, and long-term maintainability.
+- Minimize the risk of future conflicts with other features or modules (e.g., avoid touching unrelated areas, respect existing abstractions, and keep responsibilities well scoped).
+
+Output:
+- Section "Overview": 2–4 sentences summarizing the approach.
+- Section "Assumptions": bullet list of any key assumptions.
+- Section "Step-by-step Plan": numbered list; each step 1–2 sentences, clear and actionable.
+- Section "Risks & Trade-offs": bullet list of potential issues and alternatives.

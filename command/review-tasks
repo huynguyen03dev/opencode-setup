@@ -1,0 +1,18 @@
+Review the completed task(s) and code changes above against the following criteria:
+
+1) Consistency with existing coding style and conventions.
+2) Maintainability (clarity, modularity, testability, and separation of concerns).
+3) Risk of future conflicts with other parts of the system (e.g., overlapping responsibilities, touching unstable or unrelated modules).
+4) Correctness (does the code actually solve the stated problem?).
+
+For each criterion:
+- State whether the changes meet it (Yes/Mostly/No).
+- Provide a brief justification.
+- Suggest concrete improvements where appropriate.
+
+Output format (Markdown):
+- Section "Summary": 2–4 sentences overall assessment of the implementation.
+- Section "Style & Conventions": bullets with findings and suggestions.
+- Section "Maintainability": bullets with findings and suggestions.
+- Section "Future Conflicts": bullets describing any risks and how to reduce them.
+- Section "Actionable Changes": numbered list of specific edits to make to the code.

@@ -1,4 +1,4 @@
-# Rule: Generating a Product Requirements Document (PRD)
+# Command: Generating a Product Requirements Document (PRD)
 
 ## Goal
 
